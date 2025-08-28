@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase'
 import OpenAI from 'openai'
 
-// Define the Review type
+// Add Review type for Supabase
 type Review = {
   id: string;
   approved: boolean;
@@ -45,7 +45,7 @@ export async function POST(req: Request) {
     const sentiment = completion.choices[0].message.content?.trim() || 'Neutral'
     const approved = sentiment === 'Positive'
 
-    // 2️⃣ Update review row with AI result
+    // 2️⃣ Update review row with AI result (typed)
     const { error: updateError } = await supabase
       .from<Review>('reviews')
       .update({ 
@@ -89,4 +89,3 @@ export async function POST(req: Request) {
       error: 'Internal server error' 
     }, { status: 500 })
   }
-}
