@@ -34,9 +34,9 @@ export async function POST(req: Request) {
           content: 'You are a healthcare review moderator. Classify patient reviews as Positive, Neutral, or Negative based on sentiment and appropriateness for public display. Consider medical professionalism standards.'
         },
         {
-          role: 'user',
-          content: Classify this patient review as Positive, Neutral, or Negative:\n\n"${review_text}",
-        },
+  role: 'user',
+  content: `Classify this patient review as Positive, Neutral, or Negative:\n\n"${review_text}"`,
+},
       ],
       max_tokens: 10,
       temperature: 0.1,
