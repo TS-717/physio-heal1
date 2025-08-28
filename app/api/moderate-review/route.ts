@@ -1,7 +1,15 @@
-
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase'
 import OpenAI from 'openai'
+
+// Define the Review type
+type Review = {
+  id: string;
+  approved: boolean;
+  updated_at: string;
+  content?: string;
+  created_at: string;
+};
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -27,7 +35,7 @@ export async function POST(req: Request) {
         },
         {
           role: 'user',
-          content: `Classify this patient review as Positive, Neutral, or Negative:\n\n"${review_text}"`,
+          content: Classify this patient review as Positive, Neutral, or Negative:\n\n"${review_text}",
         },
       ],
       max_tokens: 10,
@@ -39,7 +47,7 @@ export async function POST(req: Request) {
 
     // 2️⃣ Update review row with AI result
     const { error: updateError } = await supabase
-      .from('reviews')
+      .from<Review>('reviews')
       .update({ 
         approved,
         updated_at: new Date().toISOString()
