@@ -12,7 +12,7 @@ type Review = {
 };
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey: process.env.OPENAI_API_KEY || '',
 })
 
 export async function POST(req: Request) {
@@ -34,15 +34,15 @@ export async function POST(req: Request) {
           content: 'You are a healthcare review moderator. Classify patient reviews as Positive, Neutral, or Negative based on sentiment and appropriateness for public display. Consider medical professionalism standards.'
         },
         {
-  role: 'user',
-  content: `Classify this patient review as Positive, Neutral, or Negative:\n\n"${review_text}"`,
-},
+          role: 'user',
+          content: Classify this patient review as Positive, Neutral, or Negative:\n\n"${review_text}",
+        },
       ],
       max_tokens: 10,
       temperature: 0.1,
     })
 
-    const sentiment = completion.choices[0].message.content?.trim() || 'Neutral'
+    const sentiment = completion.choices?.[0]?.message?.content?.trim() || 'Neutral'
     const approved = sentiment === 'Positive'
 
     // 2️⃣ Update review row with AI result (typed)
@@ -82,10 +82,11 @@ export async function POST(req: Request) {
       message: approved ? 'Review auto-approved' : 'Review flagged for manual review'
     })
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error in moderate-review API:', error)
     return NextResponse.json({ 
       success: false, 
-      error: 'Internal server error' 
+      error: error?.message || 'Internal server error' 
     }, { status: 500 })
   }
+}
